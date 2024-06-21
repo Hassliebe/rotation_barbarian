@@ -250,7 +250,35 @@ local function elites_in_shouts()
     return units
 end
 
-local function units_in_shouts()
+local function should_pop_cds()
+    local player_position = get_player_position();
+    local enemies = actors_manager.get_enemy_npcs();
+    local elite_units = 0;
+    local champion_units = 0;
+    local boss_units = 0;
+
+    for _, obj in ipairs(enemies) do
+        local position = obj:get_position();
+        local distance = position:dist_to(player_position);
+        local is_close = distance < 8.0;
+
+        if not is_close then
+            -- Skip this enemy and continue with the next one
+            goto continue
+        end;
+        if obj:is_elite() then
+            elite_units = elite_units + 1;
+        elseif obj:is_champion() then
+            champion_units = champion_units + 1;
+        elseif obj:is_boss() then
+            boss_units = boss_units + 1;
+        end;
+        ::continue::
+    end;
+    return elite_units, champion_units, boss_units
+end
+
+local function steel_grasp_units()
     local player_position = get_player_position();
     local enemies = actors_manager.get_enemy_npcs();
     local elite_units = 0;
@@ -300,5 +328,5 @@ return
     get_best_point_rec = get_best_point_rec,
 
     elites_in_shouts = elites_in_shouts,
-    units_in_shouts = units_in_shouts,
+    should_pop_cds = should_pop_cds,
 }

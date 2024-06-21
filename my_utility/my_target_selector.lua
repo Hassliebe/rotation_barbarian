@@ -106,15 +106,23 @@ local function get_target_selector_data(source, list)
     for _, unit in ipairs(possible_targets_list) do
         local unit_position = unit:get_position()
         local distance_sqr = unit_position:squared_dist_to_ignore_z(source)
-
+        local cursor_pos = get_cursor_position()
+        local player_position = get_player_position()
         local max_health = unit:get_max_health()
         local current_health = unit:get_current_health()
 
         -- update units data
-        if distance_sqr < closest_unit_distance then
+        if unit_position:dist_to(cursor_pos) <= 1 then
+            closest_unit = unit;
+            closest_unit_distance = distance_sqr;
+        elseif distance_sqr < closest_unit_distance then
             closest_unit = unit;
             closest_unit_distance = distance_sqr;
             is_valid = true;
+
+        elseif unit_position:dist_to(cursor_pos) < 2 then
+            closest_unit = unit;
+            closest_unit_distance = distance_sqr;
         end
 
         if current_health < lowest_current_health_unit_health then
@@ -228,7 +236,7 @@ local function get_target_selector_data(source, list)
         end
     end
 
-    return 
+    return
     {
         is_valid = is_valid,
 
