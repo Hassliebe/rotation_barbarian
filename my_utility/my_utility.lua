@@ -256,6 +256,9 @@ local function should_pop_cds()
     local elite_units = 0;
     local champion_units = 0;
     local boss_units = 0;
+    local elite_positions = {};
+    local champion_positions = {};
+    local boss_positions = {};
 
     for _, obj in ipairs(enemies) do
         local position = obj:get_position();
@@ -268,14 +271,17 @@ local function should_pop_cds()
         end;
         if obj:is_elite() then
             elite_units = elite_units + 1;
+            table.insert(elite_positions, position);
         elseif obj:is_champion() then
             champion_units = champion_units + 1;
+            table.insert(champion_positions, position);
         elseif obj:is_boss() then
             boss_units = boss_units + 1;
+            table.insert(boss_positions, position);
         end;
         ::continue::
     end;
-    return elite_units, champion_units, boss_units
+    return elite_units, champion_units, boss_units, elite_positions, champion_positions, boss_positions
 end
 
 local function steel_grasp_units()

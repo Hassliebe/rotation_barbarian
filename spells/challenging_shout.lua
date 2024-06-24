@@ -35,7 +35,7 @@ local function logics()
                 spell_id_challenging_shout);
 
     if not is_logic_allowed then
-    return false;
+        return false;
     end;
 
     local filter_mode = menu_elements_challenging_shout_base.filter_mode:get()
@@ -44,30 +44,16 @@ local function logics()
     local units = area_data.n_hits
     local elite_units, champion_units, boss_units = my_utility.should_pop_cds()
 
---[[
-    if filter_mode == 1 then
-        -- boss / elite
-        if elite_units < 1 and champion_units < 1 and boss_units < 1 then
-            return false
-        end
-    end
+    local elite_collision = target_selector.is_wall_collision(player_pos, elite_pos, 1.50)
+    local champion_collision = target_selector.is_wall_collision(player_pos, champion_pos, 1.50)
+    local boss_collision = target_selector.is_wall_collision(player_pos, boss_pos, 1.50)
 
-    if filter_mode == 2 then
-        -- boss only
-        if boss_units < 1 then
-            return false
-        end
-    end
 
-    if filter_mode ~= 1 and filter_mode ~= 2 then
-        if units < menu_elements_challenging_shout_base.min_max_targets:get() then
-            return false;
-        end
-    end
-]]
+    if  ((filter_mode == 1 and elite_units >= 1 and not elite_collision)
+        or (champion_units >= 1 and not champion_collision)
+        or (boss_units >= 1 and not boss_collision))
 
-    if  (filter_mode == 1 and elite_units >= 1 or champion_units >= 1 or boss_units >= 1)
-        or (filter_mode == 2 and boss_units >= 1)
+        or (filter_mode == 2 and boss_units >= 1 and not boss_collision)
         or (units >= menu_elements_challenging_shout_base.min_max_targets:get())
         then
             if cast_spell.self(spell_id_challenging_shout, 0.000) then

@@ -11,7 +11,7 @@ local menu_elements_bash_base =
 }
 
 local function menu()
-    
+
     if menu_elements_bash_base.tree_tab:push("Bash")then
         menu_elements_bash_base.main_boolean:render("Enable Spell", "")
 

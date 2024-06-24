@@ -1,4 +1,5 @@
 local my_utility = require("my_utility/my_utility")
+local bash = require("spells/bash")
 
 local menu_elements_steel_grasp =
 {

@@ -62,9 +62,14 @@ local function logics(target)
             return false
         end
     end
-    local player_position = get_player_position()
     local enemies = actors_manager.get_enemy_npcs();
     local x = 5
+
+    local player_position = get_player_position()
+    local is_wall_collision = target_selector.is_wall_collision(player_position, target, 1.20);
+    if is_wall_collision then
+        return false;
+    end
 
     for i, enemy in ipairs(enemies) do
         local enemy_distance = player_position:dist_to(enemy:get_position())

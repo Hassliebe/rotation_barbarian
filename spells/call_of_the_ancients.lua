@@ -43,12 +43,16 @@ local function logics()
     local elite_units, champion_units, boss_units = my_utility.should_pop_cds()
     local filter_mode = menu_elements_call_of_the_anc.filter_mode:get()
 
-    --if units < menu_elements_call_of_the_anc.min_max_targets:get() then
-    --    return false;
-    --end;
+    local elite_collision = target_selector.is_wall_collision(player_pos, elite_pos, 1.50)
+    local champion_collision = target_selector.is_wall_collision(player_pos, champion_pos, 1.50)
+    local boss_collision = target_selector.is_wall_collision(player_pos, boss_pos, 1.50)
 
-    if  (filter_mode == 1 and elite_units >= 1 or champion_units >= 1 or boss_units >= 1)
-        or (filter_mode == 2 and boss_units >= 1)
+
+    if  ((filter_mode == 1 and elite_units >= 1 and not elite_collision)
+        or (champion_units >= 1 and not champion_collision)
+        or (boss_units >= 1 and not boss_collision))
+
+        or (filter_mode == 2 and boss_units >= 1 and not boss_collision)
         or (units >= menu_elements_call_of_the_anc.min_max_targets:get())
         then
             if cast_spell.self(spell_id_ancient, 0.0) then

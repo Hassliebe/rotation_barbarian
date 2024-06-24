@@ -217,6 +217,11 @@ on_update(function ()
         return;
     end;
 
+    if spells.call_of_the_ancients.logics() then
+        --cast_end_time = current_time + 0.3;
+        return;
+    end;
+
     if spells.ground_stomp.logics(best_target) then
         cast_end_time = current_time + 0.5;
         return;
