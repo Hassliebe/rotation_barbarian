@@ -6,7 +6,6 @@ local menu_elements_hammer_anc_base =
     tree_tab              = tree_node:new(1),
     main_boolean          = checkbox:new(true, get_hash(my_utility.plugin_label .. "main_boolean_hammer_base")),
     only_bash_buffed      = checkbox:new(true, get_hash(my_utility.plugin_label .. "only_bash_buffed_hammer_base")),
-    bash_buff_number      = slider_int:new(1, 15, 4, get_hash(my_utility.plugin_label .. "bash_buff_number_hammer_base")),
     min_max_targets       = slider_int:new(0, 30, 5, get_hash(my_utility.plugin_label .. "min_max_number_of_targets_for_cast_hammer_base"))
 }
 
@@ -15,9 +14,6 @@ local function menu()
     if menu_elements_hammer_anc_base.tree_tab:push("Hammer Of The Ancients") then
         menu_elements_hammer_anc_base.main_boolean:render("Enable Spell", "")
         menu_elements_hammer_anc_base.only_bash_buffed:render("Only Bash Buff", "Only use HotA for buffing Bash")
-        if menu_elements_hammer_anc_base.only_bash_buffed:get() then
-            menu_elements_hammer_anc_base.bash_buff_number:render("Bash Buff Number", "Number of Bash Buffs to cast HotA")
-        end
 
         if menu_elements_hammer_anc_base.main_boolean:get() then
             menu_elements_hammer_anc_base.min_max_targets:render("Min Enemies Hit", "Amount of targets to cast the spell")
@@ -41,7 +37,9 @@ local spell_data_hammer = spell_data:new(
     spell_id_hammer_of_anc,           -- spell_id
     spell_geometry.rectangular, -- geometry_type
     targeting_type.targeted    --targeting_type
+
 )
+
 local function logics(target)
 
     local menu_boolean = menu_elements_hammer_anc_base.main_boolean:get();
@@ -74,13 +72,13 @@ local function logics(target)
     end
     --console.print_full(1.0,1.0,"Bash casts: " .. bash_counter_func() .. "currently and slider set to " .. menu_elements_hammer_anc_base.bash_buff_number:get())
 
-    if (menu_elements_hammer_anc_base.only_bash_buffed:get() and bash.get_bash_counter() >= menu_elements_hammer_anc_base.bash_buff_number:get())
+    local bash_passive_count = my_utility.count_and_display_buffs()
+    if (menu_elements_hammer_anc_base.only_bash_buffed:get() and bash_passive_count >= 2)
         or (menu_elements_hammer_anc_base.only_bash_buffed:get() ==false) then
         if cast_spell.target(target, spell_data_hammer, false) then
             local current_time = get_time_since_inject();
             next_time_allowed_cast = current_time + 0.2;
             console.print("Casted hammer of ancients");
-            console.print("Used HotA with" .. bash_counter_func() .. "Stacks of Bashcrits")
             bash.reset_bash_counter()
             return true;
         end

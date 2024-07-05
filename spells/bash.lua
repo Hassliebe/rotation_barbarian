@@ -11,18 +11,27 @@ local menu_elements_bash_base =
 }
 
 local function menu()
+    local elements = {}
 
-    if menu_elements_bash_base.tree_tab:push("Bash")then
-        menu_elements_bash_base.main_boolean:render("Enable Spell", "")
+    if menu_elements_bash_base.tree_tab:push("Bash") then
+        elements.main_boolean = menu_elements_bash_base.main_boolean
+        elements.main_boolean:render("Enable Spell", "")
 
-        if menu_elements_bash_base.main_boolean:get() then
-            menu_elements_bash_base.use_as_filler_only:render("Filler Only", "Prevent casting with a lot of fury")
-            menu_elements_bash_base.spell_range:render("Spell Range", "", 2)
-            menu_elements_bash_base.max_angle:render("Max Angle", "")
-         end
- 
-         menu_elements_bash_base.tree_tab:pop()
+        if elements.main_boolean:get() then
+            elements.use_as_filler_only = menu_elements_bash_base.use_as_filler_only
+            elements.use_as_filler_only:render("Filler Only", "Prevent casting with a lot of fury")
+
+            elements.spell_range = menu_elements_bash_base.spell_range
+            elements.spell_range:render("Spell Range", "", 2)
+
+            elements.max_angle = menu_elements_bash_base.max_angle
+            elements.max_angle:render("Max Angle", "")
+        end
+
+        menu_elements_bash_base.tree_tab:pop()
     end
+
+    return elements
 end
 
 local spell_id_bash = 200765;
@@ -83,6 +92,9 @@ local function logics(entity_list)
             local cursor_dist_sqr = cursor_position:squared_dist_to_ignore_z(target_position)
             local is_cursor_far = cursor_dist_sqr > (5.70 * 5.70)
             if is_cursor_far and not is_very_close and angle > menu_elements_bash_base.max_angle:get() then
+                if is_auto_play_active then
+                    table.insert(filtered_entities, {entity = target, angle = angle})
+                end
             else
                 table.insert(filtered_entities, {entity = target, angle = angle})
             end
@@ -113,8 +125,7 @@ local function reset_bash_counter()
     bash_counter = 0
 end
 
-return
-{
+return {
     menu = menu,
     logics = logics,
     bash_counter = bash_counter,

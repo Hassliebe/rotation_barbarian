@@ -312,6 +312,30 @@ local function steel_grasp_units()
     return elite_units, champion_units, boss_units
 end
 
+local function count_and_display_buffs()
+    local local_player = get_local_player()
+    if not local_player then return end
+
+    local buffs = local_player:get_buffs()
+    if not buffs then return end
+
+    local bash_passive_count = 0
+
+    for _, buff in ipairs(buffs) do
+        local buff_name = buff:name()
+        if buff_name == "Barbarian_Bash_Passive" then
+            bash_passive_count = bash_passive_count + 1
+        end
+    end
+
+    if bash_passive_count == 1 then
+        console.print_full(0.2, 1.0, "BASH PASSIVE NOT READY")
+    elseif bash_passive_count == 2 then
+        console.print_full(0.2, 1.0, "BASH PASSIVE READY ABOUT TO SLAMDUNK!!")
+    end
+    return bash_passive_count
+end
+
 
 local plugin_label = "BASE_WARRIOR_PLUGIN_"
 
@@ -335,4 +359,5 @@ return
 
     elites_in_shouts = elites_in_shouts,
     should_pop_cds = should_pop_cds,
+    count_and_display_buffs = count_and_display_buffs,
 }
